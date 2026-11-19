@@ -26,7 +26,7 @@ const {
 } = useTowerTier();
 
 const { theme, toggleTheme, resetTheme } = useTheme();
-const { tierSure, resetLocale } = useLocale();
+const { resetLocale } = useLocale();
 
 function resetAll() {
   resetSettings();
@@ -56,7 +56,7 @@ function resetAll() {
         <WipPanel v-if="tier.wip" :tier-label="tier.label" />
         <template v-else>
           <StageStats :hp="hp" :atk="atk" :cards="cards" :has-cards="!!tier.cards" :tier-label="tier.label" />
-          <TierTable :hp="hp" :atk="atk" :sp-atk="spAtk" :sp-hp="spHp" :cards="cards" :sure="tierSure(tierId)" :tier-label="tier.label" />
+          <TierTable :hp="hp" :atk="atk" :sp-atk="spAtk" :sp-hp="spHp" :cards="cards" :tier-label="tier.label" />
         </template>
       </main>
     </div>
