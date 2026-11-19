@@ -36,14 +36,9 @@ export const DICT = {
     colAtk: "ATK",
     colSpecial: "Spécial ×1,2 — ATK sp. / Vie sp.",
     colCards: "Cartes",
-    confidence: "Confiance {tier} :",
     wipTitle: "{tier} — en construction",
     wipBody: "Les données ne sont pas encore disponibles pour ce tier. Reviens plus tard !",
-    tierSure: {
-      1: "Vie/ATK vérifiées sur 47 stages, du 1 au 4001. Cartes : loi de puissance décalée, le charme étant un ×1,6 constant appliqué au nombre sans charme (cohérent par construction). Calée sur les stages 4 à 35 (sans charme, écart <1 % dès le stage ~20) et sur un point à grande échelle (stage ~23800 → ~9M avec charme, soit ~5,625M sans charme déduit).",
-      2: "Vie/ATK revus : croissance exponentielle (et non une loi de puissance), calée sur les stages 1 à 4999, écart < 0,5 % partout. Les cartes restent provisoires, calées sur les stages 1 à 25 seulement — probablement fausses au-delà.",
-      3: "Provisoire : calée sur les stages 1 à 19 et 170 à 172 seulement. Le stage 17 observé (11,7k cartes) semble être une erreur de saisie, écarté du calage.",
-    },
+    version: "Version",
   },
   en: {
     brandLine1: "Calculator",
@@ -73,14 +68,9 @@ export const DICT = {
     colAtk: "ATK",
     colSpecial: "Special ×1.2 — ATK sp. / HP sp.",
     colCards: "Cards",
-    confidence: "Confidence {tier}:",
     wipTitle: "{tier} — work in progress",
     wipBody: "Data isn't available for this tier yet. Check back later!",
-    tierSure: {
-      1: "HP/ATK verified across 47 stages, from 1 to 4001. Cards: shifted power law, with the charm being a constant ×1.6 applied to the value without the charm (consistent by construction). Calibrated on stages 4 to 35 (without the charm, gap <1% from stage ~20 onward) and on one large-scale data point (stage ~23800 → ~9M with the charm, i.e. ~5.625M without the charm deduced).",
-      2: "HP/ATK revised: exponential growth (not a power law), calibrated on stages 1 to 4999, gap < 0.5% everywhere. Cards remain provisional, calibrated on stages 1 to 25 only — likely inaccurate beyond that.",
-      3: "Provisional: calibrated on stages 1 to 19 and 170 to 172 only. The observed stage 17 (11.7k cards) looks like a data-entry error and was excluded from the calibration.",
-    },
+    version: "Version",
   },
   es: {
     brandLine1: "Calculadora",
@@ -110,14 +100,9 @@ export const DICT = {
     colAtk: "ATK",
     colSpecial: "Especial ×1,2 — ATK esp. / Vida esp.",
     colCards: "Cartas",
-    confidence: "Confianza {tier}:",
     wipTitle: "{tier} — en construcción",
     wipBody: "Los datos de este tier aún no están disponibles. ¡Vuelve más tarde!",
-    tierSure: {
-      1: "Vida/ATK verificadas en 47 etapas, de la 1 a la 4001. Cartas: ley de potencia desplazada, siendo el amuleto un ×1,6 constante aplicado al valor sin amuleto (coherente por construcción). Calibrada en las etapas 4 a 35 (sin amuleto, desviación <1 % a partir de la etapa ~20) y en un punto a gran escala (etapa ~23800 → ~9M con amuleto, es decir ~5,625M sin amuleto deducido).",
-      2: "Vida/ATK revisadas: crecimiento exponencial (y no una ley de potencia), calibrado en las etapas 1 a 4999, desviación < 0,5 % en todo el rango. Las cartas siguen siendo provisionales, calibradas solo en las etapas 1 a 25 — probablemente incorrectas más allá.",
-      3: "Provisional: calibrada solo en las etapas 1 a 19 y 170 a 172. La etapa 17 observada (11,7k cartas) parece ser un error de introducción de datos y se excluyó del calibrado.",
-    },
+    version: "Versión",
   },
   de: {
     brandLine1: "Rechner",
@@ -147,13 +132,8 @@ export const DICT = {
     colAtk: "ATK",
     colSpecial: "Spezial ×1,2 — ATK sp. / Leben sp.",
     colCards: "Karten",
-    confidence: "Vertrauen {tier}:",
     wipTitle: "{tier} — in Arbeit",
     wipBody: "Für diese Stufe sind noch keine Daten verfügbar. Schau später noch einmal vorbei!",
-    tierSure: {
-      1: "Leben/ATK anhand von 47 Etappen überprüft, von 1 bis 4001. Karten: verschobenes Potenzgesetz, wobei der Charm ein konstanter Faktor ×1,6 auf den Wert ohne Charm ist (konstruktionsbedingt konsistent). Kalibriert anhand der Etappen 4 bis 35 (ohne Charm, Abweichung <1 % ab Etappe ~20) und anhand eines Datenpunkts im großen Maßstab (Etappe ~23800 → ~9M mit Charm, also ~5,625M ohne Charm abgeleitet).",
-      2: "Leben/ATK überarbeitet: exponentielles Wachstum (keine Potenzfunktion), kalibriert anhand der Etappen 1 bis 4999, Abweichung überall < 0,5 %. Die Kartenwerte bleiben vorläufig, nur anhand der Etappen 1 bis 25 kalibriert — darüber hinaus wahrscheinlich ungenau.",
-      3: "Vorläufig: nur anhand der Etappen 1 bis 19 und 170 bis 172 kalibriert. Die beobachtete Etappe 17 (11,7k Karten) scheint ein Eingabefehler zu sein und wurde von der Kalibrierung ausgeschlossen.",
-    },
+    version: "Version",
   },
 };

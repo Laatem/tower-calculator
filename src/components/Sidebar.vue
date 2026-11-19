@@ -1,7 +1,10 @@
 <script setup>
 import { useLocale } from "../composables/useLocale";
+import pkg from "../../package.json";
 
 const { locale, setLocale, locales, localeTag, t } = useLocale();
+
+const appVersion = pkg.version;
 
 const props = defineProps({
   tierId: { type: Number, required: true },
@@ -142,6 +145,8 @@ function fmtPercent(n) {
         <span aria-hidden="true">↺</span>
         {{ t("resetSettings") }}
       </button>
+
+      <div class="version">{{ t("version") }} {{ appVersion }}</div>
     </div>
   </aside>
 </template>
@@ -289,6 +294,13 @@ function fmtPercent(n) {
 }
 .bottom-toggle:hover { color: var(--color-accent-700); }
 .reset-toggle { border-top: 0; padding-top: 4px; }
+
+.version {
+  padding: 10px 24px 16px;
+  font-size: 11px;
+  color: var(--color-neutral-700);
+  text-align: left;
+}
 
 @media (max-width: 860px) {
   .brand { padding: 22px 20px 18px; font-size: 26px; }

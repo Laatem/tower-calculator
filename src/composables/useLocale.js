@@ -36,10 +36,6 @@ export function useLocale() {
     return interpolate(str, vars);
   }
 
-  function tierSure(tierId) {
-    return DICT[locale.value]?.tierSure?.[tierId] ?? DICT[DEFAULT_LOCALE].tierSure[tierId];
-  }
-
   function setLocale(code) {
     if (CODES.includes(code)) locale.value = code;
   }
@@ -48,5 +44,5 @@ export function useLocale() {
     locale.value = DEFAULT_LOCALE;
   }
 
-  return { locale, setLocale, resetLocale, locales: LOCALES, localeTag, t, tierSure };
+  return { locale, setLocale, resetLocale, locales: LOCALES, localeTag, t };
 }

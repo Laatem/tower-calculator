@@ -1,6 +1,5 @@
 // Chaque tier : formule de vie (ATK = vie / 2) et cartes gagnées en cas de défaite.
-// Le texte de confiance ("sure") vit dans src/i18n/dictionary.js (clé tierSure), traduit par langue.
-// Pour ajouter un tier : ajouter une entrée ici, un bouton dans Sidebar.vue, et une entrée tierSure par langue.
+// Pour ajouter un tier : ajouter une entrée ici, le bouton correspondant se génère automatiquement dans Sidebar.vue.
 export const TIERS = {
   1: {
     label: "Tier 1",

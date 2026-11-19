@@ -11,7 +11,6 @@ const props = defineProps({
   spAtk: { type: Function, required: true },
   spHp: { type: Function, required: true },
   cards: { type: Function, required: true },
-  sure: { type: String, required: true },
   tierLabel: { type: String, required: true },
 });
 
@@ -56,7 +55,6 @@ const rows = computed(() =>
         </tbody>
       </table>
     </div>
-    <p class="note"><strong>{{ t("confidence", { tier: tierLabel }) }}</strong> {{ sure }}</p>
   </section>
 </template>
 
@@ -77,11 +75,6 @@ th:first-child, td:first-child { text-align: left; }
 td.stage { font-family: var(--font-heading); font-weight: 800; }
 td.muted { color: var(--color-neutral-700); }
 td.cards { font-weight: 600; color: var(--color-accent-700); }
-
-.note {
-  margin: 0; font-size: 14px; color: var(--color-neutral-800); line-height: 1.5; text-wrap: pretty;
-}
-.note strong { color: var(--color-text); font-weight: 600; }
 
 @media (max-width: 860px) {
   .paliers { padding: 28px 20px 24px; }
