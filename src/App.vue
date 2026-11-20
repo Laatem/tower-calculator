@@ -27,7 +27,7 @@ const {
   resetSettings,
 } = useTowerTier();
 
-const { theme, toggleTheme, resetTheme } = useTheme();
+const { theme, toggleTheme, palette, setPalette, palettes, resetTheme } = useTheme();
 const { resetLocale, t } = useLocale();
 
 function resetAll() {
@@ -52,7 +52,10 @@ const activeTab = ref("calculator");
         :workshop-level-max="workshopLevelMax"
         :cards-bonus-percent="cardsBonusPercent"
         :theme="theme"
+        :palette="palette"
+        :palettes="palettes"
         @toggle-theme="toggleTheme"
+        @select-palette="setPalette"
         @reset="resetAll"
       />
 
