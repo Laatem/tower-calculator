@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useTowerTier } from "./composables/useTowerTier";
+import { useSpeedTower } from "./composables/useSpeedTower";
 import { useTheme } from "./composables/useTheme";
 import { useLocale } from "./composables/useLocale";
 import Sidebar from "./components/Sidebar.vue";
+import Footer from "./components/Footer.vue";
 import StageStats from "./components/StageStats.vue";
 import TierTable from "./components/TierTable.vue";
 import WipPanel from "./components/WipPanel.vue";
@@ -21,17 +23,28 @@ const {
   cardsBonusPercent,
   hp,
   atk,
-  spAtk,
-  spHp,
   cards,
   resetSettings,
 } = useTowerTier();
+
+const {
+  workshopSpeedLevel,
+  workshopSpeedLevelMin,
+  workshopSpeedLevelMax,
+  potionV,
+  baseSpeedInput,
+  speedBonusPercent,
+  effectiveSpeed,
+  effectiveSpeedLabel,
+  resetSpeedSettings,
+} = useSpeedTower(climbersCharm, maskedManCharm);
 
 const { theme, toggleTheme, palette, setPalette, palettes, resetTheme } = useTheme();
 const { resetLocale, t } = useLocale();
 
 function resetAll() {
   resetSettings();
+  resetSpeedSettings();
   resetTheme();
   resetLocale();
 }
@@ -41,16 +54,65 @@ const activeTab = ref("calculator");
 
 <template>
   <div class="page">
-    <div class="shell">
-      <Sidebar
-        v-model:tierId="tierId"
-        :available-tiers="availableTiers"
-        v-model:climbers-charm="climbersCharm"
-        v-model:masked-man-charm="maskedManCharm"
-        v-model:workshop-level="workshopLevel"
-        :workshop-level-min="workshopLevelMin"
-        :workshop-level-max="workshopLevelMax"
-        :cards-bonus-percent="cardsBonusPercent"
+    <div class="wrap">
+      <div class="shell">
+        <Sidebar
+          v-model:tierId="tierId"
+          :available-tiers="availableTiers"
+          v-model:climbers-charm="climbersCharm"
+          v-model:masked-man-charm="maskedManCharm"
+          v-model:workshop-level="workshopLevel"
+          :workshop-level-min="workshopLevelMin"
+          :workshop-level-max="workshopLevelMax"
+          :cards-bonus-percent="cardsBonusPercent"
+          v-model:workshop-speed-level="workshopSpeedLevel"
+          :workshop-speed-level-min="workshopSpeedLevelMin"
+          :workshop-speed-level-max="workshopSpeedLevelMax"
+          v-model:potion-v="potionV"
+          v-model:base-speed-input="baseSpeedInput"
+          :speed-bonus-percent="speedBonusPercent"
+          :effective-speed-label="effectiveSpeedLabel"
+        />
+
+        <main>
+          <div class="tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              class="tab-btn"
+              :class="{ active: activeTab === 'calculator' }"
+              :aria-selected="activeTab === 'calculator'"
+              @click="activeTab = 'calculator'"
+            >{{ t("tabCalculator") }}</button>
+            <button
+              type="button"
+              role="tab"
+              class="tab-btn"
+              :class="{ active: activeTab === 'estimate' }"
+              :aria-selected="activeTab === 'estimate'"
+              @click="activeTab = 'estimate'"
+            >{{ t("tabEstimate") }}</button>
+          </div>
+
+          <template v-if="activeTab === 'calculator'">
+            <WipPanel v-if="tier.wip" :tier-label="tier.label" />
+            <template v-else>
+              <StageStats
+                :hp="hp"
+                :atk="atk"
+                :cards="cards"
+                :has-cards="!!tier.cards"
+                :tier-label="tier.label"
+                :effective-speed="effectiveSpeed"
+              />
+              <TierTable :hp="hp" :atk="atk" :cards="cards" :tier-label="tier.label" />
+            </template>
+          </template>
+          <CardEstimateTool v-else />
+        </main>
+      </div>
+
+      <Footer
         :theme="theme"
         :palette="palette"
         :palettes="palettes"
@@ -58,36 +120,6 @@ const activeTab = ref("calculator");
         @select-palette="setPalette"
         @reset="resetAll"
       />
-
-      <main>
-        <div class="tabs" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            class="tab-btn"
-            :class="{ active: activeTab === 'calculator' }"
-            :aria-selected="activeTab === 'calculator'"
-            @click="activeTab = 'calculator'"
-          >{{ t("tabCalculator") }}</button>
-          <button
-            type="button"
-            role="tab"
-            class="tab-btn"
-            :class="{ active: activeTab === 'estimate' }"
-            :aria-selected="activeTab === 'estimate'"
-            @click="activeTab = 'estimate'"
-          >{{ t("tabEstimate") }}</button>
-        </div>
-
-        <template v-if="activeTab === 'calculator'">
-          <WipPanel v-if="tier.wip" :tier-label="tier.label" />
-          <template v-else>
-            <StageStats :hp="hp" :atk="atk" :cards="cards" :has-cards="!!tier.cards" :tier-label="tier.label" />
-            <TierTable :hp="hp" :atk="atk" :sp-atk="spAtk" :sp-hp="spHp" :cards="cards" :tier-label="tier.label" />
-          </template>
-        </template>
-        <CardEstimateTool v-else />
-      </main>
     </div>
   </div>
 </template>
@@ -100,9 +132,14 @@ const activeTab = ref("calculator");
   justify-content: center;
 }
 
-.shell {
+.wrap {
   width: 100%;
   max-width: 1280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell {
   background: var(--color-bg);
   box-shadow: var(--shadow-lg);
   display: grid;

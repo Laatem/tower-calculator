@@ -1,10 +1,7 @@
 <script setup>
 import { useLocale } from "../composables/useLocale";
-import pkg from "../../package.json";
 
-const { locale, setLocale, locales, localeTag, t } = useLocale();
-
-const appVersion = pkg.version;
+const { localeTag, t } = useLocale();
 
 const props = defineProps({
   tierId: { type: Number, required: true },
@@ -15,18 +12,22 @@ const props = defineProps({
   workshopLevelMin: { type: Number, default: 1 },
   workshopLevelMax: { type: Number, default: 20 },
   cardsBonusPercent: { type: Number, required: true },
-  theme: { type: String, required: true },
-  palette: { type: String, required: true },
-  palettes: { type: Array, required: true },
+  workshopSpeedLevel: { type: Number, required: true },
+  workshopSpeedLevelMin: { type: Number, default: 1 },
+  workshopSpeedLevelMax: { type: Number, default: 20 },
+  potionV: { type: Boolean, required: true },
+  baseSpeedInput: { type: String, required: true },
+  speedBonusPercent: { type: Number, required: true },
+  effectiveSpeedLabel: { type: String, default: null },
 });
 const emit = defineEmits([
   "update:tierId",
   "update:climbersCharm",
   "update:maskedManCharm",
   "update:workshopLevel",
-  "toggleTheme",
-  "selectPalette",
-  "reset",
+  "update:workshopSpeedLevel",
+  "update:potionV",
+  "update:baseSpeedInput",
 ]);
 
 function fmtPercent(n) {
@@ -43,7 +44,7 @@ function fmtPercent(n) {
 
     <div class="block">
       <h6>Tier</h6>
-      <div class="tier-list" role="group" aria-label="Tier de la tour">
+      <div class="tier-grid" role="group" aria-label="Tier de la tour">
         <button
           v-for="tierItem in availableTiers"
           :key="tierItem.id"
@@ -54,10 +55,7 @@ function fmtPercent(n) {
           @click="emit('update:tierId', tierItem.id)"
         >
           Tier {{ tierItem.id }}
-          <span class="tier-btn-right">
-            <span v-if="tierItem.wip" class="tag tag-outline wip-tag">WIP</span>
-            <span v-if="tierId === tierItem.id" class="dot" aria-hidden="true">●</span>
-          </span>
+          <span v-if="tierItem.wip" class="wip-dot" aria-label="WIP"></span>
         </button>
       </div>
     </div>
@@ -116,55 +114,64 @@ function fmtPercent(n) {
       </div>
     </div>
 
-    <div class="bottom">
-      <div class="lang-row" role="group" aria-label="Langue">
-        <button
-          v-for="l in locales"
-          :key="l.code"
-          type="button"
-          class="lang-btn"
-          :class="{ active: locale === l.code }"
-          :aria-pressed="locale === l.code"
-          @click="setLocale(l.code)"
-        >
-          {{ l.label }}
-        </button>
+    <div class="block charms">
+      <h6>{{ t("speedBonusTitle") }}</h6>
+
+      <label class="speed-field">
+        <span class="workshop-label-row">
+          <span class="workshop-label">{{ t("speedBaseLabel") }} <small>{{ t("speedBaseSuffix") }}</small></span>
+        </span>
+        <input
+          type="text"
+          inputmode="decimal"
+          class="speed-input"
+          :value="baseSpeedInput"
+          :placeholder="t('speedBasePlaceholder')"
+          @input="emit('update:baseSpeedInput', $event.target.value)"
+        />
+      </label>
+
+      <label class="charm">
+        <input
+          type="checkbox"
+          class="sr-only"
+          :checked="potionV"
+          @change="emit('update:potionV', $event.target.checked)"
+        />
+        <span class="box" aria-hidden="true"></span>
+        <span class="charm-text">
+          <strong>Battle Potion V</strong>
+          <small>{{ t("potionVDesc") }}</small>
+        </span>
+      </label>
+
+      <label class="workshop-field">
+        <span class="workshop-label-row">
+          <span class="workshop-label">{{ t("workshopSpeedLabel") }} <small>{{ t("workshopSpeedSuffix") }}</small></span>
+          <strong class="workshop-value">{{ workshopSpeedLevel }}</strong>
+        </span>
+        <input
+          type="range"
+          class="workshop-slider"
+          :min="workshopSpeedLevelMin"
+          :max="workshopSpeedLevelMax"
+          step="1"
+          :value="workshopSpeedLevel"
+          :aria-label="t('workshopSpeedLabel')"
+          @input="emit('update:workshopSpeedLevel', +$event.target.value)"
+        />
+      </label>
+
+      <div class="total-row">
+        <span>{{ t("totalSpeed") }}</span>
+        <strong>+{{ fmtPercent(speedBonusPercent) }} %</strong>
       </div>
 
-      <div class="palette-row" role="group" :aria-label="t('paletteTitle')">
-        <button
-          v-for="p in palettes"
-          :key="p.id"
-          type="button"
-          class="palette-btn"
-          :class="['swatch-' + p.id, { active: palette === p.id }]"
-          :aria-pressed="palette === p.id"
-          @click="emit('selectPalette', p.id)"
-        >
-          <span class="swatch" aria-hidden="true"></span>
-          {{ t(p.labelKey) }}
-        </button>
+      <div class="final-speed">
+        <span>{{ t("speedFinalLabel") }}</span>
+        <strong v-if="effectiveSpeedLabel">{{ effectiveSpeedLabel }}</strong>
+        <span v-else class="final-speed-empty">—</span>
       </div>
-
-      <button
-        type="button"
-        class="bottom-toggle"
-        @click="emit('toggleTheme')"
-      >
-        <span aria-hidden="true">{{ theme === "dark" ? "☾" : "☀" }}</span>
-        {{ theme === "dark" ? t("themeDark") : t("themeLight") }}
-      </button>
-
-      <button
-        type="button"
-        class="bottom-toggle reset-toggle"
-        @click="emit('reset')"
-      >
-        <span aria-hidden="true">↺</span>
-        {{ t("resetSettings") }}
-      </button>
-
-      <div class="version">{{ t("version") }} {{ appVersion }}</div>
     </div>
   </aside>
 </template>
@@ -201,30 +208,32 @@ function fmtPercent(n) {
   border-bottom: 2px solid var(--color-divider-soft);
 }
 
-.tier-list {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid var(--color-text);
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 .tier-btn {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 12px 14px;
-  font: 800 15px var(--font-heading);
+  justify-content: center;
+  padding: 14px 8px;
+  font: 800 14px var(--font-heading);
   color: var(--color-text);
   background: transparent;
-  border: 0;
-  border-top: 2px solid var(--color-text);
+  border: 2px solid var(--color-text);
   cursor: pointer;
-  text-align: left;
+  text-align: center;
 }
-.tier-btn:first-child { border-top: 0; }
-.tier-btn.active { background: var(--color-accent); color: var(--color-bg); }
+.tier-btn.active { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
 .tier-btn:not(.active):hover { background: var(--color-divider-soft); }
-.tier-btn-right { display: inline-flex; align-items: center; gap: 8px; }
-.tier-btn.active .wip-tag { border-color: var(--color-bg); color: var(--color-bg); }
+.wip-dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--color-accent);
+}
+.tier-btn.active .wip-dot { background: var(--color-bg); }
 
 .charms { gap: 16px; }
 
@@ -244,6 +253,14 @@ function fmtPercent(n) {
 .charm .sr-only:focus-visible + .box { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .charm-text { display: flex; flex-direction: column; font-size: 14px; }
 .charm-text small { color: var(--color-neutral-700); font-size: 13px; }
+
+.speed-field { display: flex; flex-direction: column; gap: 8px; cursor: default; }
+.speed-input {
+  height: 40px; padding: 0 12px; font: 700 16px var(--font-body);
+  background: var(--color-surface); color: var(--color-text);
+  border: 1px solid var(--color-divider);
+}
+.speed-input::placeholder { color: var(--color-neutral-700); opacity: 0.7; }
 
 .workshop-field { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; cursor: default; }
 .workshop-label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
@@ -283,84 +300,21 @@ function fmtPercent(n) {
 }
 .total-row strong { font-family: var(--font-heading); font-size: 22px; color: var(--color-accent-700); }
 
-.bottom { margin-top: auto; display: flex; flex-direction: column; }
-
-.lang-row {
-  display: flex;
-  border-top: 2px solid var(--color-divider-soft);
-  padding: 14px 24px 0;
+.final-speed {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 14px 16px; background: var(--color-accent); color: var(--color-bg);
 }
-.lang-btn {
-  flex: 1;
-  padding: 8px 4px;
-  font: 700 12px var(--font-heading);
-  letter-spacing: 0.04em;
-  color: var(--color-neutral-700);
-  background: transparent;
-  border: 1px solid var(--color-divider);
-  cursor: pointer;
-}
-.lang-btn + .lang-btn { border-left: 0; }
-.lang-btn.active { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
-.lang-btn:not(.active):hover { background: var(--color-divider-soft); }
-
-.palette-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding: 16px 24px 0;
-  border-top: 2px solid var(--color-divider-soft);
-}
-.palette-btn {
-  display: flex; align-items: center; gap: 7px;
-  padding: 8px 10px; font: 600 12px var(--font-body);
-  color: var(--color-neutral-700);
-  background: transparent; border: 1px solid var(--color-divider);
-  cursor: pointer;
-}
-.palette-btn:hover { background: var(--color-divider-soft); }
-.palette-btn.active { border-color: var(--color-text); color: var(--color-text); }
-.palette-btn .swatch {
-  width: 12px; height: 12px; border-radius: 50%; flex: none;
-  border: 1px solid var(--color-divider);
-}
-.swatch-red .swatch { background: #ec3013; }
-.swatch-blue .swatch { background: #1958d6; }
-.swatch-green .swatch { background: #1f8a4c; }
-.swatch-violet .swatch { background: #7b2fd1; }
-
-.bottom-toggle {
-  display: flex; align-items: center; gap: 8px;
-  padding: 16px 24px; font: 500 13px var(--font-body); color: var(--color-neutral-700);
-  background: transparent; border: 0; border-top: 2px solid var(--color-divider-soft);
-  cursor: pointer; text-align: left;
-}
-.bottom-toggle:hover { color: var(--color-accent-700); }
-.reset-toggle { border-top: 0; padding-top: 4px; }
-
-.version {
-  padding: 10px 24px 16px;
-  font-size: 11px;
-  color: var(--color-neutral-700);
-  text-align: left;
-}
+.final-speed strong { font-family: var(--font-heading); font-size: 26px; }
+.final-speed-empty { font-size: 16px; opacity: 0.7; }
 
 @media (max-width: 860px) {
   .brand { padding: 22px 20px 18px; font-size: 26px; }
   .block { padding: 18px 20px; }
-  .bottom { margin-top: 0; }
-  .lang-row { padding: 14px 20px 0; }
-  .bottom-toggle { padding: 14px 20px; }
 }
 
-/* Très petits écrans : resserre encore le bloc bonus (select workshop, langues). */
+/* Très petits écrans : resserre encore le bloc bonus. */
 @media (max-width: 380px) {
   .block { padding: 14px 16px; }
   .workshop-label { font-size: 13px; }
-  .select-wrap select { font-size: 14px; padding: 0 26px 0 10px; }
-  .lang-row { padding: 12px 16px 0; gap: 0; }
-  .lang-btn { font-size: 11px; padding: 7px 2px; }
-  .palette-row { padding: 12px 16px 0; }
-  .palette-btn { font-size: 11px; padding: 7px 8px; }
 }
 </style>
