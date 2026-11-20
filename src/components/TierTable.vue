@@ -21,7 +21,7 @@ const rows = computed(() =>
     s,
     hp: abbr(props.hp(s)),
     atk: abbr(props.atk(s)),
-    special: `${abbr(props.spAtk(s))} / ${abbr(props.spHp(s))}`,
+    special: `${abbr(props.spHp(s))} / ${abbr(props.spAtk(s))}`,
     cards: props.cards(s) == null ? "–" : abbr(props.cards(s)),
   }))
 );
