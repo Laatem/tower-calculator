@@ -27,8 +27,4 @@ jobs:
             ci
             style
           requireScope: false
-          subjectPattern: ^(?![A-Z]).+$
-          subjectPatternError: >
-            Le sujet "{subject}" du titre de PR "{title}" ne doit pas commencer
-            par une majuscule.
           wip: true
