@@ -1,0 +1,60 @@
+name: Compute version on PR to main
+
+# Dès qu'une PR vise main (la promotion dev->main, ou un hotfix direct), la version
+# est calculée et commitée DANS la PR elle-même (sur sa branche), pas dans une PR séparée.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+
+      - name: Bump version from feat/fix/hotfix commits in this PR
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Si le dernier commit est déjà un bump qu'on a posé, rien de neuf à calculer
+          # (évite la boucle : notre propre push redéclenche "synchronize").
+          if git log -1 --pretty=%s | grep -q '^🔖'; then
+            echo "Dernier commit déjà un bump de version, rien à faire."
+            exit 0
+          fi
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          LAST_BUMP_SHA=$(git log "$BASE_SHA"..HEAD --grep='^🔖' --pretty=%H | tail -1)
+          RANGE="${LAST_BUMP_SHA:-$BASE_SHA}..HEAD"
+
+          COMMITS=$(git log "$RANGE" --pretty=%s)
+          echo "Commits analysés :"
+          echo "$COMMITS"
+
+          BUMP=""
+          if echo "$COMMITS" | grep -qiE '^feat(\(.+\))?!?:'; then
+            BUMP="minor"
+          elif echo "$COMMITS" | grep -qiE '^(fix|hotfix)(\(.+\))?!?:'; then
+            BUMP="patch"
+          fi
+
+          if [ -z "$BUMP" ]; then
+            echo "Aucun commit feat/fix/hotfix depuis le dernier bump, rien à faire."
+            exit 0
+          fi
+
+          npm version "$BUMP" --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+
+          git add package.json package-lock.json
+          git commit -m "🔖 v$NEW_VERSION"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
