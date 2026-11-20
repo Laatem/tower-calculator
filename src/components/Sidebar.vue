@@ -16,6 +16,8 @@ const props = defineProps({
   workshopLevelMax: { type: Number, default: 20 },
   cardsBonusPercent: { type: Number, required: true },
   theme: { type: String, required: true },
+  palette: { type: String, required: true },
+  palettes: { type: Array, required: true },
 });
 const emit = defineEmits([
   "update:tierId",
@@ -23,6 +25,7 @@ const emit = defineEmits([
   "update:maskedManCharm",
   "update:workshopLevel",
   "toggleTheme",
+  "selectPalette",
   "reset",
 ]);
 
@@ -125,6 +128,21 @@ function fmtPercent(n) {
           @click="setLocale(l.code)"
         >
           {{ l.label }}
+        </button>
+      </div>
+
+      <div class="palette-row" role="group" :aria-label="t('paletteTitle')">
+        <button
+          v-for="p in palettes"
+          :key="p.id"
+          type="button"
+          class="palette-btn"
+          :class="['swatch-' + p.id, { active: palette === p.id }]"
+          :aria-pressed="palette === p.id"
+          @click="emit('selectPalette', p.id)"
+        >
+          <span class="swatch" aria-hidden="true"></span>
+          {{ t(p.labelKey) }}
         </button>
       </div>
 
@@ -286,6 +304,31 @@ function fmtPercent(n) {
 .lang-btn.active { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
 .lang-btn:not(.active):hover { background: var(--color-divider-soft); }
 
+.palette-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 16px 24px 0;
+  border-top: 2px solid var(--color-divider-soft);
+}
+.palette-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 10px; font: 600 12px var(--font-body);
+  color: var(--color-neutral-700);
+  background: transparent; border: 1px solid var(--color-divider);
+  cursor: pointer;
+}
+.palette-btn:hover { background: var(--color-divider-soft); }
+.palette-btn.active { border-color: var(--color-text); color: var(--color-text); }
+.palette-btn .swatch {
+  width: 12px; height: 12px; border-radius: 50%; flex: none;
+  border: 1px solid var(--color-divider);
+}
+.swatch-red .swatch { background: #ec3013; }
+.swatch-blue .swatch { background: #1958d6; }
+.swatch-green .swatch { background: #1f8a4c; }
+.swatch-violet .swatch { background: #7b2fd1; }
+
 .bottom-toggle {
   display: flex; align-items: center; gap: 8px;
   padding: 16px 24px; font: 500 13px var(--font-body); color: var(--color-neutral-700);
@@ -317,5 +360,7 @@ function fmtPercent(n) {
   .select-wrap select { font-size: 14px; padding: 0 26px 0 10px; }
   .lang-row { padding: 12px 16px 0; gap: 0; }
   .lang-btn { font-size: 11px; padding: 7px 2px; }
+  .palette-row { padding: 12px 16px 0; }
+  .palette-btn { font-size: 11px; padding: 7px 8px; }
 }
 </style>

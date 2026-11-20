@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from "vue";
-import { abbr, fmtExact } from "../lib/format";
+import { abbr } from "../lib/format";
 import { useLocale } from "../composables/useLocale";
 
-const { localeTag, t } = useLocale();
+const { t } = useLocale();
 
 const props = defineProps({
   hp: { type: Function, required: true },
@@ -108,17 +108,15 @@ function onClick(fn) {
       <div class="stat">
         <div class="stat-head"><h6>{{ t("hp") }}</h6><span class="tag tag-outline">{{ t("estim") }}</span></div>
         <div class="big">{{ abbr(h) }}</div>
-        <div class="exact">{{ fmtExact(h, localeTag) }}</div>
       </div>
       <div class="stat">
         <div class="stat-head"><h6>{{ t("atk") }}</h6><span class="tag tag-outline">{{ t("estim") }}</span></div>
         <div class="big">{{ abbr(a) }}</div>
-        <div class="exact">{{ fmtExact(a, localeTag) }}</div>
       </div>
       <div class="stat">
         <div class="stat-head"><h6>{{ t("cardsIfDefeated") }}</h6><span v-if="hasCards" class="tag tag-outline">{{ t("estim") }}</span></div>
         <div class="big accent">{{ c == null ? "–" : abbr(c) }}</div>
-        <div class="exact">{{ c == null ? t("noData") : "≈ " + fmtExact(c, localeTag) }}</div>
+        <div v-if="c == null" class="exact">{{ t("noData") }}</div>
       </div>
     </div>
   </section>

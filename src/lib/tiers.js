@@ -13,7 +13,8 @@ export const TIERS = {
   },
   3: {
     label: "Tier 3",
-    hp: (s) => Math.floor(637.9 * Math.pow(s + 1364.9, 0.95)),
+    // Recalée sur 3 points mesurés in-game (stage 200/300/400), écart < 0,3%.
+    hp: (s) => Math.floor(363.7 * Math.pow(s + 1164.8, 0.95)),
     cards: (s) => (s <= 1 ? 0 : Math.floor(688 * (s - 1) + 0.096 * (s - 1) ** 2)),
   },
   4: {
