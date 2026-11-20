@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { abbr } from "../lib/format";
+import { estimateSeconds, formatDuration } from "../lib/speed";
 import { useLocale } from "../composables/useLocale";
 
 const { t } = useLocale();
@@ -11,6 +12,7 @@ const props = defineProps({
   cards: { type: Function, required: true },
   hasCards: { type: Boolean, required: true },
   tierLabel: { type: String, required: true },
+  effectiveSpeed: { type: Number, default: null },
 });
 
 const stage = ref(500);
@@ -19,6 +21,10 @@ const clampedStage = computed(() => Math.max(1, Math.floor(stage.value || 1)));
 const h = computed(() => props.hp(clampedStage.value));
 const a = computed(() => props.atk(clampedStage.value));
 const c = computed(() => props.cards(clampedStage.value));
+
+const estimatedTime = computed(() =>
+  props.effectiveSpeed > 0 ? estimateSeconds(props.effectiveSpeed, clampedStage.value) : null
+);
 
 function dec() { stage.value = Math.max(1, clampedStage.value - 1); }
 function inc() { stage.value = clampedStage.value + 1; }
@@ -119,6 +125,12 @@ function onClick(fn) {
         <div v-if="c == null" class="exact">{{ t("noData") }}</div>
       </div>
     </div>
+
+    <div class="time-row">
+      <span>{{ t("stageTimeLabel") }}</span>
+      <strong v-if="estimatedTime != null">{{ formatDuration(estimatedTime) }}</strong>
+      <span v-else class="time-empty">{{ t("stageTimeEmpty") }}</span>
+    </div>
   </section>
 </template>
 
@@ -166,11 +178,20 @@ function onClick(fn) {
 .big.accent { color: var(--color-accent); }
 .exact { font-size: 14px; color: var(--color-neutral-700); overflow-wrap: anywhere; }
 
+.time-row {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 16px 40px; border-bottom: 2px solid var(--color-text);
+  font-size: 14px; color: var(--color-neutral-700);
+}
+.time-row strong { font-family: var(--font-heading); font-size: 18px; color: var(--color-accent-700); }
+.time-empty { font-size: 13px; text-align: right; }
+
 @media (max-width: 860px) {
   .hero { padding: 22px 20px; }
   .stats { grid-template-columns: 1fr; }
   .stat { border-left: 0; border-top: 2px solid var(--color-divider-soft); }
   .stat:first-child { border-top: 0; }
+  .time-row { padding: 14px 20px; flex-wrap: wrap; }
 }
 
 /* Très petits écrans : steppers plus compacts pour ne pas déborder à côté du gros chiffre. */

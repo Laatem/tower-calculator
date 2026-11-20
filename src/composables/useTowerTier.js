@@ -81,8 +81,6 @@ export function useTowerTier() {
 
   const hp = (s) => (tier.value.hp ? tier.value.hp(s) : null);
   const atk = (s) => { const h = hp(s); return h == null ? null : Math.floor(h / 2); };
-  const spAtk = (s) => { const h = hp(s); return h == null ? null : Math.floor(h * 0.6); };
-  const spHp = (s) => { const h = hp(s); return h == null ? null : Math.floor(h * 1.2); };
   const cards = (s) => {
     if (!tier.value.cards) return null;
     const base = tier.value.cards(s);
@@ -101,8 +99,6 @@ export function useTowerTier() {
     cardsBonusPercent,
     hp,
     atk,
-    spAtk,
-    spHp,
     cards,
     resetSettings,
   };
