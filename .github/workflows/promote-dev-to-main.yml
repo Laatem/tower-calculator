@@ -3,6 +3,7 @@ name: Promote dev to main
 on:
   push:
     branches: [dev]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -37,4 +38,4 @@ jobs:
             --base main \
             --head dev \
             --title "chore: promote dev to main" \
-            --body "PR automatique regroupant les changements de \`dev\` prêts à partir en production.
+            --body "PR automatique regroupant les changements de dev prets a partir en production. A merger avec un merge normal (pas de squash), pour que release-please calcule correctement la prochaine version a partir des commits individuels (feat/fix)."
