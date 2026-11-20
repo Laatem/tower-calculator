@@ -4,27 +4,18 @@ on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 
-permissions:
-  pull-requests: write
-
 jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
     steps:
-      - uses: amannn/action-semantic-pull-request@v5
+      - name: Check PR title format
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          types: |
-            feat
-            fix
-            chore
-            docs
-            refactor
-            perf
-            test
-            build
-            ci
-            style
-          requireScope: false
-          wip: true
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Titre de la PR : $PR_TITLE"
+          PATTERN='^(feat|fix|chore|docs|refactor|perf|test|build|ci|style)(\([a-zA-Z0-9_-]+\))?!?: .+'
+          if ! [[ "$PR_TITLE" =~ $PATTERN ]]; then
+            echo "::error::Le titre de la PR ne respecte pas le format Conventional Commits attendu par release-please. Exemples valides : 'feat: ajoute X', 'fix(hotfix): corrige Y'. Titre reçu : $PR_TITLE"
+            exit 1
+          fi
+          echo "Titre valide."
