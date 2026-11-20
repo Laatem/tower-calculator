@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useTowerTier } from "./composables/useTowerTier";
 import { useTheme } from "./composables/useTheme";
 import { useLocale } from "./composables/useLocale";
@@ -6,6 +7,7 @@ import Sidebar from "./components/Sidebar.vue";
 import StageStats from "./components/StageStats.vue";
 import TierTable from "./components/TierTable.vue";
 import WipPanel from "./components/WipPanel.vue";
+import CardEstimateTool from "./components/CardEstimateTool.vue";
 
 const {
   tierId,
@@ -26,13 +28,15 @@ const {
 } = useTowerTier();
 
 const { theme, toggleTheme, resetTheme } = useTheme();
-const { resetLocale } = useLocale();
+const { resetLocale, t } = useLocale();
 
 function resetAll() {
   resetSettings();
   resetTheme();
   resetLocale();
 }
+
+const activeTab = ref("calculator");
 </script>
 
 <template>
@@ -53,11 +57,33 @@ function resetAll() {
       />
 
       <main>
-        <WipPanel v-if="tier.wip" :tier-label="tier.label" />
-        <template v-else>
-          <StageStats :hp="hp" :atk="atk" :cards="cards" :has-cards="!!tier.cards" :tier-label="tier.label" />
-          <TierTable :hp="hp" :atk="atk" :sp-atk="spAtk" :sp-hp="spHp" :cards="cards" :tier-label="tier.label" />
+        <div class="tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            class="tab-btn"
+            :class="{ active: activeTab === 'calculator' }"
+            :aria-selected="activeTab === 'calculator'"
+            @click="activeTab = 'calculator'"
+          >{{ t("tabCalculator") }}</button>
+          <button
+            type="button"
+            role="tab"
+            class="tab-btn"
+            :class="{ active: activeTab === 'estimate' }"
+            :aria-selected="activeTab === 'estimate'"
+            @click="activeTab = 'estimate'"
+          >{{ t("tabEstimate") }}</button>
+        </div>
+
+        <template v-if="activeTab === 'calculator'">
+          <WipPanel v-if="tier.wip" :tier-label="tier.label" />
+          <template v-else>
+            <StageStats :hp="hp" :atk="atk" :cards="cards" :has-cards="!!tier.cards" :tier-label="tier.label" />
+            <TierTable :hp="hp" :atk="atk" :sp-atk="spAtk" :sp-hp="spHp" :cards="cards" :tier-label="tier.label" />
+          </template>
         </template>
+        <CardEstimateTool v-else />
       </main>
     </div>
   </div>
@@ -81,6 +107,19 @@ function resetAll() {
 }
 
 main { display: flex; flex-direction: column; min-width: 0; }
+
+.tabs { display: flex; border-bottom: 2px solid var(--color-text); }
+.tab-btn {
+  padding: 16px 24px; font: 700 14px var(--font-heading); letter-spacing: 0.02em;
+  color: var(--color-neutral-700); background: transparent; border: 0;
+  border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer;
+}
+.tab-btn:hover { color: var(--color-text); }
+.tab-btn.active { color: var(--color-accent-700); border-bottom-color: var(--color-accent); }
+
+@media (max-width: 860px) {
+  .tab-btn { padding: 14px 20px; }
+}
 
 /* Palier tablette : sidebar resserrée mais toujours à côté du contenu. */
 @media (max-width: 1024px) {
