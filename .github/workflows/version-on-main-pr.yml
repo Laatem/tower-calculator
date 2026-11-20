@@ -36,7 +36,9 @@ jobs:
           LAST_BUMP_SHA=$(git log "$BASE_SHA"..HEAD --grep='^🔖' --pretty=%H | tail -1)
           RANGE="${LAST_BUMP_SHA:-$BASE_SHA}..HEAD"
 
-          COMMITS=$(git log "$RANGE" --pretty=%s)
+          # %B (message complet) et pas %s (1re ligne seule) : sur un merge commit GitHub,
+          # le titre de la PR ("feat: ...") est en 3e ligne, pas sur la 1re.
+          COMMITS=$(git log "$RANGE" --pretty=%B)
           echo "Commits analysés :"
           echo "$COMMITS"
 
