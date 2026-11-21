@@ -19,7 +19,8 @@ export const TIERS = {
   },
   4: {
     label: "Tier 4",
-    // Pas encore de données in-game pour ce tier : wip:true désactive les stats/paliers côté UI.
-    wip: true,
+    // Recalée sur 14 points mesurés in-game (stage 5 à 120), écart < 0,2%.
+    hp: (s) => Math.floor(3453024 + 3451 * s),
+    cards: (s) => (s <= 1 ? 0 : Math.floor(2052.78 * (s - 1) + 0.5556 * (s - 1) ** 2)),
   },
 };

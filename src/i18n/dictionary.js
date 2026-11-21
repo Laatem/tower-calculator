@@ -11,6 +11,7 @@ export const DICT = {
   fr: {
     brandLine1: "Calculateur",
     brandLine2: "Tour Infinie",
+    stuffTitle: "Stuff (cartes + vitesse)",
     cardBonusTitle: "Bonus de cartes",
     climbersDesc: "+60% cartes · +60% vitesse",
     maskedDesc: "+20% cartes · +30% vitesse",
@@ -68,6 +69,7 @@ export const DICT = {
   en: {
     brandLine1: "Calculator",
     brandLine2: "Infinite Tower",
+    stuffTitle: "Stuff (cards + speed)",
     cardBonusTitle: "Card bonus",
     climbersDesc: "+60% cards · +60% speed",
     maskedDesc: "+20% cards · +30% speed",
@@ -125,6 +127,7 @@ export const DICT = {
   es: {
     brandLine1: "Calculadora",
     brandLine2: "Torre Infinita",
+    stuffTitle: "Stuff (cartas + velocidad)",
     cardBonusTitle: "Bono de cartas",
     climbersDesc: "+60% cartas · +60% velocidad",
     maskedDesc: "+20% cartas · +30% velocidad",
@@ -182,6 +185,7 @@ export const DICT = {
   de: {
     brandLine1: "Rechner",
     brandLine2: "Unendlicher Turm",
+    stuffTitle: "Stuff (Karten + Geschwindigkeit)",
     cardBonusTitle: "Kartenbonus",
     climbersDesc: "+60% Karten · +60% Geschwindigkeit",
     maskedDesc: "+20% Karten · +30% Geschwindigkeit",

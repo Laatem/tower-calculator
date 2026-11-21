@@ -60,8 +60,8 @@ function fmtPercent(n) {
       </div>
     </div>
 
-    <div class="block charms">
-      <h6>{{ t("cardBonusTitle") }}</h6>
+    <div class="block stuff">
+      <h6>{{ t("stuffTitle") }}</h6>
 
       <label class="charm">
         <input
@@ -90,6 +90,10 @@ function fmtPercent(n) {
           <small>{{ t("maskedDesc") }}</small>
         </span>
       </label>
+    </div>
+
+    <div class="block stuff">
+      <h6>{{ t("cardBonusTitle") }}</h6>
 
       <label class="workshop-field">
         <span class="workshop-label-row">
@@ -114,7 +118,7 @@ function fmtPercent(n) {
       </div>
     </div>
 
-    <div class="block charms">
+    <div class="block stuff">
       <h6>{{ t("speedBonusTitle") }}</h6>
 
       <label class="speed-field">
@@ -235,7 +239,7 @@ function fmtPercent(n) {
 }
 .tier-btn.active .wip-dot { background: var(--color-bg); }
 
-.charms { gap: 16px; }
+.stuff { gap: 16px; }
 
 .charm { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
 .charm .sr-only {
