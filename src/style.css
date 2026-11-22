@@ -104,3 +104,8 @@ input:focus-visible, select:focus-visible, button:focus-visible {
   border-radius: 3px;
 }
 .tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* Fiabilité d'une formule : combien de points mesurés en jeu l'ont calée. */
+.tag-high { border: 1px solid #1f8a4c; color: #1f8a4c; }
+.tag-low { border: 1px solid #c88a1f; color: #c88a1f; }
+.tag-none { border: 1px solid var(--color-neutral-700); color: var(--color-neutral-700); }

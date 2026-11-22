@@ -5,7 +5,7 @@
 const TIME_A = 8.582;
 const TIME_B = 0.1745;
 
-export function timePerStage(speed) {
+function timePerStage(speed) {
   if (!(speed > 0)) return null;
   return TIME_A / speed + TIME_B;
 }
