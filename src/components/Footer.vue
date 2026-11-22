@@ -1,5 +1,7 @@
 <script setup>
+import { ref } from "vue";
 import { useLocale } from "../composables/useLocale";
+import RecalibrationTool from "./RecalibrationTool.vue";
 import pkg from "../../package.json";
 
 const { locale, setLocale, locales, t } = useLocale();
@@ -12,10 +14,13 @@ const props = defineProps({
   palettes: { type: Array, required: true },
 });
 const emit = defineEmits(["toggleTheme", "selectPalette", "reset"]);
+
+const showRecalib = ref(false);
 </script>
 
 <template>
-  <footer class="footer">
+  <footer class="footer-wrap">
+  <div class="footer">
     <div class="lang-row" role="group" aria-label="Langue">
       <button
         v-for="l in locales"
@@ -55,19 +60,30 @@ const emit = defineEmits(["toggleTheme", "selectPalette", "reset"]);
       {{ t("resetSettings") }}
     </button>
 
+    <button type="button" class="footer-btn footer-btn-subtle" @click="showRecalib = !showRecalib">
+      <span aria-hidden="true">🧮</span>
+      {{ t("recalibToggle") }}
+    </button>
+
     <div class="version">{{ t("version") }} {{ appVersion }}</div>
+  </div>
+
+  <RecalibrationTool v-if="showRecalib" />
   </footer>
 </template>
 
 <style scoped>
+.footer-wrap {
+  border-top: 2px solid var(--color-text);
+  background: var(--color-bg);
+}
+
 .footer {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
   padding: 16px 32px;
-  border-top: 2px solid var(--color-text);
-  background: var(--color-bg);
 }
 
 .lang-row { display: flex; }
@@ -110,6 +126,10 @@ const emit = defineEmits(["toggleTheme", "selectPalette", "reset"]);
   cursor: pointer;
 }
 .footer-btn:hover { color: var(--color-accent-700); border-color: var(--color-accent-700); }
+
+/* Outil avancé, discret : même style que les autres boutons mais sans "cadre" opaque. */
+.footer-btn-subtle { border-style: dashed; opacity: 0.75; }
+.footer-btn-subtle:hover { opacity: 1; }
 
 .version {
   margin-left: auto;
