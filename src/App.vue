@@ -56,9 +56,9 @@ const activeTab = ref("calculator");
 <template>
   <div class="page">
     <div class="wrap">
-      <div class="shell" :class="{ 'no-sidebar': activeTab !== 'calculator' }">
+      <div class="shell">
         <Sidebar
-          v-if="activeTab === 'calculator'"
+          :visible="activeTab === 'calculator'"
           v-model:tierId="tierId"
           :available-tiers="availableTiers"
           v-model:climbers-charm="climbersCharm"
@@ -104,22 +104,28 @@ const activeTab = ref("calculator");
             >{{ t("tabRarity") }}</button>
           </div>
 
-          <template v-if="activeTab === 'calculator'">
-            <WipPanel v-if="tier.wip" :tier-label="tier.label" />
-            <template v-else>
-              <StageStats
-                :hp="hp"
-                :atk="atk"
-                :cards="cards"
-                :has-cards="!!tier.cards"
-                :tier-label="tier.label"
-                :effective-speed="effectiveSpeed"
-              />
-              <TierTable :hp="hp" :atk="atk" :cards="cards" :tier-label="tier.label" />
-            </template>
-          </template>
-          <CardEstimateTool v-else-if="activeTab === 'estimate'" />
-          <RarityCalculatorTool v-else />
+          <div class="panels">
+            <div class="panel" :class="{ hidden: activeTab !== 'calculator' }">
+              <WipPanel v-if="tier.wip" :tier-label="tier.label" />
+              <template v-else>
+                <StageStats
+                  :hp="hp"
+                  :atk="atk"
+                  :cards="cards"
+                  :has-cards="!!tier.cards"
+                  :tier-label="tier.label"
+                  :effective-speed="effectiveSpeed"
+                />
+                <TierTable :hp="hp" :atk="atk" :cards="cards" :tier-label="tier.label" />
+              </template>
+            </div>
+            <div class="panel" :class="{ hidden: activeTab !== 'estimate' }">
+              <CardEstimateTool />
+            </div>
+            <div class="panel" :class="{ hidden: activeTab !== 'rarity' }">
+              <RarityCalculatorTool />
+            </div>
+          </div>
         </main>
       </div>
 
@@ -156,9 +162,18 @@ const activeTab = ref("calculator");
   display: grid;
   grid-template-columns: 320px 1fr;
 }
-.shell.no-sidebar { grid-template-columns: 1fr; }
 
 main { display: flex; flex-direction: column; min-width: 0; }
+
+/* Les 3 panneaux restent montés, superposés dans la même cellule de grille : la hauteur
+   de main suit toujours le plus grand des trois (en général le Calculateur), même quand
+   un panneau plus court est affiché, pour éviter que la page se tasse en changeant d'onglet. */
+.panels { display: grid; flex: 1; }
+.panel {
+  grid-row: 1; grid-column: 1;
+  display: flex; flex-direction: column; min-width: 0;
+}
+.panel.hidden { visibility: hidden; pointer-events: none; }
 
 .tabs { display: flex; border-bottom: 2px solid var(--color-text); }
 .tab-btn {
