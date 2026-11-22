@@ -115,6 +115,8 @@ const activeTab = ref("calculator");
                   :has-cards="!!tier.cards"
                   :tier-label="tier.label"
                   :effective-speed="effectiveSpeed"
+                  :hp-calibration="tier.hpCalibration"
+                  :cards-calibration="tier.cardsCalibration"
                 />
                 <TierTable :hp="hp" :atk-from-hp="atkFromHp" :cards="cards" :tier-label="tier.label" />
               </template>

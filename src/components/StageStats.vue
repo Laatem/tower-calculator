@@ -2,6 +2,7 @@
 import { ref, computed, onBeforeUnmount } from "vue";
 import { abbr } from "../lib/format";
 import { estimateSeconds, formatDuration } from "../lib/speed";
+import { calibrationLevel } from "../lib/tiers";
 import { useLocale } from "../composables/useLocale";
 
 const { t } = useLocale();
@@ -13,7 +14,20 @@ const props = defineProps({
   hasCards: { type: Boolean, required: true },
   tierLabel: { type: String, required: true },
   effectiveSpeed: { type: Number, default: null },
+  hpCalibration: { type: Object, default: null },
+  cardsCalibration: { type: Object, default: null },
 });
+
+function calibBadge(calibration) {
+  const level = calibrationLevel(calibration);
+  const n = calibration?.points ?? 0;
+  const text = level === "none" ? t("calibNone") : level === "low" ? t("calibLow") : t("calibHigh");
+  const title = n > 0 ? t("calibTooltip", { n }) : t("calibTooltipNone");
+  return { level, text, title };
+}
+
+const hpBadge = computed(() => calibBadge(props.hpCalibration));
+const cardsBadge = computed(() => calibBadge(props.cardsCalibration));
 
 const stage = ref(500);
 const clampedStage = computed(() => Math.max(1, Math.floor(stage.value || 1)));
@@ -114,15 +128,24 @@ function onClick(fn) {
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-head"><h6>{{ t("hp") }}</h6><span class="tag tag-outline">{{ t("estim") }}</span></div>
+        <div class="stat-head">
+          <h6>{{ t("hp") }}</h6>
+          <span class="tag" :class="'tag-' + hpBadge.level" :title="hpBadge.title">{{ hpBadge.text }}</span>
+        </div>
         <div class="big">{{ abbr(h) }}</div>
       </div>
       <div class="stat">
-        <div class="stat-head"><h6>{{ t("atk") }}</h6><span class="tag tag-outline">{{ t("estim") }}</span></div>
+        <div class="stat-head">
+          <h6>{{ t("atk") }}</h6>
+          <span class="tag" :class="'tag-' + hpBadge.level" :title="hpBadge.title">{{ hpBadge.text }}</span>
+        </div>
         <div class="big">{{ abbr(a) }}</div>
       </div>
       <div class="stat">
-        <div class="stat-head"><h6>{{ t("cardsIfDefeated") }}</h6><span v-if="hasCards" class="tag tag-outline">{{ t("estim") }}</span></div>
+        <div class="stat-head">
+          <h6>{{ t("cardsIfDefeated") }}</h6>
+          <span v-if="hasCards" class="tag" :class="'tag-' + cardsBadge.level" :title="cardsBadge.title">{{ cardsBadge.text }}</span>
+        </div>
         <div class="big accent">{{ c == null ? "–" : abbr(c) }}</div>
         <div v-if="c == null" class="exact">{{ t("noData") }}</div>
       </div>
