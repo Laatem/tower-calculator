@@ -10,6 +10,7 @@ import StageStats from "./components/StageStats.vue";
 import TierTable from "./components/TierTable.vue";
 import WipPanel from "./components/WipPanel.vue";
 import CardEstimateTool from "./components/CardEstimateTool.vue";
+import RarityCalculatorTool from "./components/RarityCalculatorTool.vue";
 
 const {
   tierId,
@@ -92,6 +93,14 @@ const activeTab = ref("calculator");
               :aria-selected="activeTab === 'estimate'"
               @click="activeTab = 'estimate'"
             >{{ t("tabEstimate") }}</button>
+            <button
+              type="button"
+              role="tab"
+              class="tab-btn"
+              :class="{ active: activeTab === 'rarity' }"
+              :aria-selected="activeTab === 'rarity'"
+              @click="activeTab = 'rarity'"
+            >{{ t("tabRarity") }}</button>
           </div>
 
           <template v-if="activeTab === 'calculator'">
@@ -108,7 +117,8 @@ const activeTab = ref("calculator");
               <TierTable :hp="hp" :atk="atk" :cards="cards" :tier-label="tier.label" />
             </template>
           </template>
-          <CardEstimateTool v-else />
+          <CardEstimateTool v-else-if="activeTab === 'estimate'" />
+          <RarityCalculatorTool v-else />
         </main>
       </div>
 
