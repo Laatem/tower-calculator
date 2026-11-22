@@ -5,18 +5,22 @@ export const TIERS = {
     label: "Tier 1",
     hp: (s) => Math.floor(20 * Math.pow(s, 0.95)),
     hpCalibration: { points: 0 },
-    cards: (s) => Math.max(0, Math.floor(1.539 * Math.pow(Math.max(0, s - 1), 1.5))),
-    cardsCalibration: { points: 0 },
+    // Recalée sur 14 points réels (floor 2 à 25000) via l'API officieuse du jeu
+    // (cbp-tower.vercel.app/api/rewards, cartes cumulées sans aucun bonus) : loi de
+    // puissance confirmée, écart < 0,1% sur toute la plage.
+    cards: (s) => Math.max(0, Math.floor(1.52 * Math.pow(Math.max(0, s - 1), 1.5))),
+    cardsCalibration: { points: 14 },
   },
   2: {
     label: "Tier 2",
     hp: (s) => Math.floor(65090 * Math.exp(0.0004394 * s)),
     hpCalibration: { points: 4 },
-    // Mise à l'échelle (×1.7077) sur 1 point mesuré in-game (floor 9300, avec bonus cartes
-    // +92.5% = Climber's Charm + workshop lvl 13) : la courbe d'origine sous-estimait d'un
-    // facteur ~1.7 à ce stage. Un 2e point réel permettrait d'affiner la forme de la courbe.
-    cards: (s) => (s <= 1 ? 0 : Math.floor(474.74 * (s - 1) + 1 + 0.06489 * (s - 1) ** 2)),
-    cardsCalibration: { points: 1 },
+    // Recalée sur 14 points réels (floor 2 à 25000) via la même API : les cartes gagnées par
+    // floor croissent en fait exponentiellement, donc le cumul suit une exponentielle décalée
+    // C*(e^(k·(s-1)) - 1), pas la forme linéaire+quadratique mise à l'échelle précédemment sur
+    // un seul point. Écart < 0,1% sur toute la plage.
+    cards: (s) => (s <= 1 ? 0 : Math.floor(1204475 * (Math.exp(0.00023101 * (s - 1)) - 1))),
+    cardsCalibration: { points: 14 },
   },
   3: {
     label: "Tier 3",
@@ -27,15 +31,23 @@ export const TIERS = {
     // 20000. Cette nouvelle formule reste cohérente (< 1%) avec les anciens points 200/300/400.
     hp: (s) => Math.floor(305500 * Math.exp(0.00065834 * s)),
     hpCalibration: { points: 5 },
-    cards: (s) => (s <= 1 ? 0 : Math.floor(688 * (s - 1) + 0.096 * (s - 1) ** 2)),
-    cardsCalibration: { points: 0 },
+    // Recalée sur 14 points réels (floor 2 à 25000) via la même API, même constat que Tier 2 :
+    // exponentielle décalée, écart < 0,05% sur toute la plage.
+    cards: (s) => (s <= 1 ? 0 : Math.floor(1982980 * (Math.exp(0.00034660 * (s - 1)) - 1))),
+    cardsCalibration: { points: 14 },
   },
   4: {
     label: "Tier 4",
-    // Recalée sur 14 points mesurés in-game (stage 5 à 120), écart < 0,2%.
-    hp: (s) => Math.floor(3453024 + 3451 * s),
-    hpCalibration: { points: 14 },
-    cards: (s) => (s <= 1 ? 0 : Math.floor(2052.78 * (s - 1) + 0.5556 * (s - 1) ** 2)),
+    // Recalée sur 5 points mesurés in-game à haut stage (floor 8320 à 12000) : même schéma
+    // que Tier 3, la vie est en fait exponentielle (ratio ×2.56 tous les 1000 stages), pas
+    // linéaire comme l'ancienne formule — celle-ci, calée sur stage 5-120, restait correcte
+    // sur cette plage basse (écart < 0,2% avec la nouvelle formule à s=120) mais sous-estimait
+    // massivement à haut stage.
+    hp: (s) => Math.floor(3451620 * Math.exp(0.00094014 * s)),
+    hpCalibration: { points: 19 },
+    // Recalée sur 14 points réels (floor 2 à 25000) via la même API, même constat : exponentielle
+    // décalée, écart < 0,02% sur toute la plage.
+    cards: (s) => (s <= 1 ? 0 : Math.floor(4146453 * (Math.exp(0.00049511 * (s - 1)) - 1))),
     cardsCalibration: { points: 14 },
   },
 };
