@@ -13,8 +13,12 @@ export const TIERS = {
   },
   3: {
     label: "Tier 3",
-    // Recalée sur 3 points mesurés in-game (stage 200/300/400), écart < 0,3%.
-    hp: (s) => Math.floor(363.7 * Math.pow(s + 1164.8, 0.95)),
+    // Recalée sur 5 points mesurés in-game (stage 19000 à 23000) : la vie croît en fait de
+    // façon exponentielle (ratio ×1.93 tous les 1000 stages, constant sur les 5 points), pas
+    // en loi de puissance comme l'ancienne formule — celle-ci, calée sur stage 200/300/400,
+    // restait correcte sur cette plage basse mais sous-estimait d'un facteur ~34 000 à stage
+    // 20000. Cette nouvelle formule reste cohérente (< 1%) avec les anciens points 200/300/400.
+    hp: (s) => Math.floor(305500 * Math.exp(0.00065834 * s)),
     cards: (s) => (s <= 1 ? 0 : Math.floor(688 * (s - 1) + 0.096 * (s - 1) ** 2)),
   },
   4: {
