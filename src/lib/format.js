@@ -6,6 +6,11 @@ export function abbr(n) {
   if (n < 1000) return String(n);
   let i = 0, v = n;
   while (v >= 1000 && i < SUF.length - 1) { v /= 1000; i++; }
+  if (v >= 1000) {
+    // Dépasse le plus grand suffixe connu (Dc, 1e33) : notation scientifique plutôt
+    // qu'un nombre brut à rallonge.
+    return n.toExponential(2);
+  }
   const dec = v >= 100 ? 0 : v >= 10 ? 1 : 2;
   const p = Math.pow(10, dec);
   return (Math.floor(v * p + 1e-9) / p).toString() + SUF[i];

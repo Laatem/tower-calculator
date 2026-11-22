@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onBeforeUnmount } from "vue";
 import { abbr } from "../lib/format";
 import { estimateSeconds, formatDuration } from "../lib/speed";
 import { useLocale } from "../composables/useLocale";
@@ -55,6 +55,8 @@ function stopHold() {
   holdInterval = null;
   fastTimeout = null;
 }
+
+onBeforeUnmount(stopHold);
 
 let pointerHeld = false;
 function onPointerDown(fn) {

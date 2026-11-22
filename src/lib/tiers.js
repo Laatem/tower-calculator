@@ -9,7 +9,10 @@ export const TIERS = {
   2: {
     label: "Tier 2",
     hp: (s) => Math.floor(65090 * Math.exp(0.0004394 * s)),
-    cards: (s) => (s <= 1 ? 0 : Math.floor(278 * (s - 1) + 1 + 0.038 * (s - 1) ** 2)),
+    // Mise à l'échelle (×1.7077) sur 1 point mesuré in-game (floor 9300, avec bonus cartes
+    // +92.5% = Climber's Charm + workshop lvl 13) : la courbe d'origine sous-estimait d'un
+    // facteur ~1.7 à ce stage. Un 2e point réel permettrait d'affiner la forme de la courbe.
+    cards: (s) => (s <= 1 ? 0 : Math.floor(474.74 * (s - 1) + 1 + 0.06489 * (s - 1) ** 2)),
   },
   3: {
     label: "Tier 3",

@@ -69,7 +69,7 @@ export const DICT = {
     rarityTitle: "Calculateur de raretés",
     rarityBaseLabel: "Rareté de base",
     rarityBaseSuffix: "(le nombre après le 1/)",
-    rarityBasePlaceholder: "Ex : 25",
+    rarityBasePlaceholder: "Ex : 25k",
     rarityEmpty: "Indique la rareté de base de la carte pour voir toutes les variantes.",
   },
   en: {
@@ -133,7 +133,7 @@ export const DICT = {
     rarityTitle: "Rarity calculator",
     rarityBaseLabel: "Base rarity",
     rarityBaseSuffix: "(the number after the 1/)",
-    rarityBasePlaceholder: "E.g. 25",
+    rarityBasePlaceholder: "E.g. 25k",
     rarityEmpty: "Enter the card's base rarity to see all variants.",
   },
   es: {
@@ -197,7 +197,7 @@ export const DICT = {
     rarityTitle: "Calculadora de rarezas",
     rarityBaseLabel: "Rareza base",
     rarityBaseSuffix: "(el número después del 1/)",
-    rarityBasePlaceholder: "Ej: 25",
+    rarityBasePlaceholder: "Ej: 25k",
     rarityEmpty: "Introduce la rareza base de la carta para ver todas las variantes.",
   },
   de: {
@@ -261,7 +261,7 @@ export const DICT = {
     rarityTitle: "Seltenheits-Rechner",
     rarityBaseLabel: "Basis-Seltenheit",
     rarityBaseSuffix: "(die Zahl nach der 1/)",
-    rarityBasePlaceholder: "Z. B. 25",
+    rarityBasePlaceholder: "Z. B. 25k",
     rarityEmpty: "Gib die Basis-Seltenheit der Karte ein, um alle Varianten zu sehen.",
   },
 };
