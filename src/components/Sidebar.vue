@@ -19,6 +19,7 @@ const props = defineProps({
   baseSpeedInput: { type: String, required: true },
   speedBonusPercent: { type: Number, required: true },
   effectiveSpeedLabel: { type: String, default: null },
+  visible: { type: Boolean, default: true },
 });
 const emit = defineEmits([
   "update:tierId",
@@ -42,6 +43,7 @@ function fmtPercent(n) {
       <span>{{ t("brandLine2") }}</span>
     </div>
 
+    <div class="info" :class="{ hidden: !visible }">
     <div class="block">
       <h6>Tier</h6>
       <div class="tier-grid" role="group" aria-label="Tier de la tour">
@@ -177,6 +179,7 @@ function fmtPercent(n) {
         <span v-else class="final-speed-empty">—</span>
       </div>
     </div>
+    </div>
   </aside>
 </template>
 
@@ -203,6 +206,9 @@ function fmtPercent(n) {
   padding: 28px 24px 24px;
   border-bottom: 2px solid var(--color-text);
 }
+
+.info { display: contents; }
+.info.hidden { visibility: hidden; }
 
 .block {
   display: flex;
