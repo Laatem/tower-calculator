@@ -23,7 +23,7 @@ const {
   workshopLevelMax,
   cardsBonusPercent,
   hp,
-  atk,
+  atkFromHp,
   cards,
   resetSettings,
 } = useTowerTier();
@@ -110,13 +110,13 @@ const activeTab = ref("calculator");
               <template v-else>
                 <StageStats
                   :hp="hp"
-                  :atk="atk"
+                  :atk-from-hp="atkFromHp"
                   :cards="cards"
                   :has-cards="!!tier.cards"
                   :tier-label="tier.label"
                   :effective-speed="effectiveSpeed"
                 />
-                <TierTable :hp="hp" :atk="atk" :cards="cards" :tier-label="tier.label" />
+                <TierTable :hp="hp" :atk-from-hp="atkFromHp" :cards="cards" :tier-label="tier.label" />
               </template>
             </div>
             <div class="panel" :class="{ hidden: activeTab !== 'estimate' }">

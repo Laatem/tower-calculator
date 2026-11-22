@@ -87,7 +87,6 @@ export function useSpeedTower(climbersCharm, maskedManCharm) {
     workshopSpeedLevelMax: WORKSHOP_SPEED_LEVEL_MAX,
     potionV,
     baseSpeedInput,
-    totalSpeedBonus,
     speedBonusPercent,
     effectiveSpeed,
     effectiveSpeedLabel,

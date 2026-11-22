@@ -7,7 +7,7 @@ const { localeTag, t } = useLocale();
 
 const props = defineProps({
   hp: { type: Function, required: true },
-  atk: { type: Function, required: true },
+  atkFromHp: { type: Function, required: true },
   cards: { type: Function, required: true },
   tierLabel: { type: String, required: true },
 });
@@ -15,12 +15,15 @@ const props = defineProps({
 const STAGES = [1, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000];
 
 const rows = computed(() =>
-  STAGES.map((s) => ({
-    s,
-    hp: abbr(props.hp(s)),
-    atk: abbr(props.atk(s)),
-    cards: props.cards(s) == null ? "–" : abbr(props.cards(s)),
-  }))
+  STAGES.map((s) => {
+    const h = props.hp(s);
+    return {
+      s,
+      hp: abbr(h),
+      atk: abbr(props.atkFromHp(h)),
+      cards: props.cards(s) == null ? "–" : abbr(props.cards(s)),
+    };
+  })
 );
 </script>
 

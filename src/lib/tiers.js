@@ -31,3 +31,25 @@ export const TIERS = {
     cards: (s) => (s <= 1 ? 0 : Math.floor(2052.78 * (s - 1) + 0.5556 * (s - 1) ** 2)),
   },
 };
+
+// Garde-fou dev uniquement : un tier supérieur ne doit jamais avoir moins de vie qu'un tier
+// inférieur à stage égal (on a dû corriger ce genre d'inversion deux fois par le passé après
+// coup, à cause de formules de formes différentes — exponentielle vs loi de puissance —
+// qui divergent très différemment en dehors de leur plage mesurée).
+if (import.meta.env?.DEV) {
+  const ids = Object.keys(TIERS).map(Number).sort((a, b) => a - b);
+  const SAMPLE_STAGES = [1, 10, 100, 500, 1000, 5000, 10000, 20000, 30000];
+  for (let i = 1; i < ids.length; i++) {
+    const prev = TIERS[ids[i - 1]];
+    const cur = TIERS[ids[i]];
+    for (const s of SAMPLE_STAGES) {
+      const prevHp = prev.hp(s);
+      const curHp = cur.hp(s);
+      if (curHp < prevHp) {
+        console.warn(
+          `[tiers.js] Tier ${ids[i]} (${curHp}) a moins de vie que Tier ${ids[i - 1]} (${prevHp}) au stage ${s} — formules incohérentes entre tiers.`
+        );
+      }
+    }
+  }
+}

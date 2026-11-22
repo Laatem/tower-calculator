@@ -80,7 +80,9 @@ export function useTowerTier() {
   }
 
   const hp = (s) => (tier.value.hp ? tier.value.hp(s) : null);
-  const atk = (s) => { const h = hp(s); return h == null ? null : Math.floor(h / 2); };
+  // atkFromHp évite de recalculer hp(s) quand l'appelant l'a déjà sous la main.
+  const atkFromHp = (h) => (h == null ? null : Math.floor(h / 2));
+  const atk = (s) => atkFromHp(hp(s));
   const cards = (s) => {
     if (!tier.value.cards) return null;
     const base = tier.value.cards(s);
@@ -99,6 +101,7 @@ export function useTowerTier() {
     cardsBonusPercent,
     hp,
     atk,
+    atkFromHp,
     cards,
     resetSettings,
   };

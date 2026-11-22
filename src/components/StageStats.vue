@@ -8,7 +8,7 @@ const { t } = useLocale();
 
 const props = defineProps({
   hp: { type: Function, required: true },
-  atk: { type: Function, required: true },
+  atkFromHp: { type: Function, required: true },
   cards: { type: Function, required: true },
   hasCards: { type: Boolean, required: true },
   tierLabel: { type: String, required: true },
@@ -19,7 +19,7 @@ const stage = ref(500);
 const clampedStage = computed(() => Math.max(1, Math.floor(stage.value || 1)));
 
 const h = computed(() => props.hp(clampedStage.value));
-const a = computed(() => props.atk(clampedStage.value));
+const a = computed(() => props.atkFromHp(h.value));
 const c = computed(() => props.cards(clampedStage.value));
 
 const estimatedTime = computed(() =>
