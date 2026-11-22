@@ -56,8 +56,9 @@ const activeTab = ref("calculator");
 <template>
   <div class="page">
     <div class="wrap">
-      <div class="shell">
+      <div class="shell" :class="{ 'no-sidebar': activeTab !== 'calculator' }">
         <Sidebar
+          v-if="activeTab === 'calculator'"
           v-model:tierId="tierId"
           :available-tiers="availableTiers"
           v-model:climbers-charm="climbersCharm"
@@ -155,6 +156,7 @@ const activeTab = ref("calculator");
   display: grid;
   grid-template-columns: 320px 1fr;
 }
+.shell.no-sidebar { grid-template-columns: 1fr; }
 
 main { display: flex; flex-direction: column; min-width: 0; }
 
