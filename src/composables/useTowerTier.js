@@ -1,10 +1,12 @@
 import { ref, computed, watch } from "vue";
-import { TIERS } from "../lib/tiers";
+import { TIERS, applyMutations } from "../lib/tiers";
 
 const STORAGE_KEY = "tower-tier";
 const CHARM_STORAGE_KEY = "tower-climbers-charm";
 const MASKED_MAN_CHARM_STORAGE_KEY = "tower-masked-man-charm";
 const WORKSHOP_LEVEL_STORAGE_KEY = "tower-workshop-level";
+const SWARM_MUTATION_STORAGE_KEY = "tower-mutation-swarm";
+const VANGUARD_MUTATION_STORAGE_KEY = "tower-mutation-vanguard";
 
 const CLIMBERS_CHARM_BONUS = 0.6;
 const MASKED_MAN_CHARM_BONUS = 0.2;
@@ -42,10 +44,22 @@ export function useTowerTier() {
     }
   } catch (e) {}
 
+  let initialSwarmMutation = false;
+  try {
+    initialSwarmMutation = localStorage.getItem(SWARM_MUTATION_STORAGE_KEY) === "1";
+  } catch (e) {}
+
+  let initialVanguardMutation = false;
+  try {
+    initialVanguardMutation = localStorage.getItem(VANGUARD_MUTATION_STORAGE_KEY) === "1";
+  } catch (e) {}
+
   const tierId = ref(initial);
   const climbersCharm = ref(initialCharm);
   const maskedManCharm = ref(initialMaskedManCharm);
   const workshopLevel = ref(initialWorkshopLevel);
+  const swarmMutation = ref(initialSwarmMutation);
+  const vanguardMutation = ref(initialVanguardMutation);
   const tier = computed(() => TIERS[tierId.value]);
 
   const totalCardsBonus = computed(() =>
@@ -72,14 +86,27 @@ export function useTowerTier() {
     try { localStorage.setItem(WORKSHOP_LEVEL_STORAGE_KEY, v); } catch (e) {}
   });
 
+  watch(swarmMutation, (v) => {
+    try { localStorage.setItem(SWARM_MUTATION_STORAGE_KEY, v ? "1" : "0"); } catch (e) {}
+  });
+
+  watch(vanguardMutation, (v) => {
+    try { localStorage.setItem(VANGUARD_MUTATION_STORAGE_KEY, v ? "1" : "0"); } catch (e) {}
+  });
+
   function resetSettings() {
     tierId.value = 1;
     climbersCharm.value = false;
     maskedManCharm.value = false;
     workshopLevel.value = WORKSHOP_LEVEL_MIN;
+    swarmMutation.value = false;
+    vanguardMutation.value = false;
   }
 
-  const hp = (s) => (tier.value.hp ? tier.value.hp(s) : null);
+  const hp = (s) => {
+    const fn = applyMutations(tier.value.hp, { swarm: swarmMutation.value, vanguard: vanguardMutation.value });
+    return fn ? fn(s) : null;
+  };
   // atkFromHp évite de recalculer hp(s) quand l'appelant l'a déjà sous la main.
   const atkFromHp = (h) => (h == null ? null : Math.floor(h / 2));
   const atk = (s) => atkFromHp(hp(s));
@@ -98,6 +125,8 @@ export function useTowerTier() {
     workshopLevel,
     workshopLevelMin: WORKSHOP_LEVEL_MIN,
     workshopLevelMax: WORKSHOP_LEVEL_MAX,
+    swarmMutation,
+    vanguardMutation,
     cardsBonusPercent,
     hp,
     atk,
