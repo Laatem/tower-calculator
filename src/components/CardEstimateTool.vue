@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { TIERS, applyMutations } from "../lib/tiers";
-import { estimatedTargetHp, maxStageForHp } from "../lib/estimate";
+import { maxStageForHp } from "../lib/estimate";
 import { fmtExact, parseShorthand } from "../lib/format";
 import { useLocale } from "../composables/useLocale";
 
@@ -13,13 +13,11 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:swarmMutation", "update:vanguardMutation"]);
 
-const cardHpInput = ref("");
 const cardAtkInput = ref("");
 
-const cardHp = computed(() => parseShorthand(cardHpInput.value));
-const cardAtk = computed(() => parseShorthand(cardAtkInput.value));
-
-const targetHp = computed(() => estimatedTargetHp(cardHp.value, cardAtk.value));
+// Hypothèse speedfarm : la carte élimine l'ennemi en un coup tant que sa vie <= cet ATK,
+// donc la vie de la carte elle-même n'a aucun impact sur le stage atteignable.
+const targetHp = computed(() => parseShorthand(cardAtkInput.value));
 
 const rows = computed(() => {
   if (!targetHp.value) return [];
@@ -46,10 +44,6 @@ const rows = computed(() => {
     </div>
 
     <div class="fields">
-      <label class="field">
-        <span>{{ t("estimateCardHp") }}</span>
-        <input v-model="cardHpInput" type="text" inputmode="decimal" :placeholder="t('estimatePlaceholder')" />
-      </label>
       <label class="field">
         <span>{{ t("estimateCardAtk") }}</span>
         <input v-model="cardAtkInput" type="text" inputmode="decimal" :placeholder="t('estimatePlaceholder')" />
