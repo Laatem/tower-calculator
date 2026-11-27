@@ -18,6 +18,8 @@ const {
   availableTiers,
   climbersCharm,
   maskedManCharm,
+  swarmMutation,
+  vanguardMutation,
   workshopLevel,
   workshopLevelMin,
   workshopLevelMax,
@@ -63,6 +65,8 @@ const activeTab = ref("calculator");
           :available-tiers="availableTiers"
           v-model:climbers-charm="climbersCharm"
           v-model:masked-man-charm="maskedManCharm"
+          v-model:swarm-mutation="swarmMutation"
+          v-model:vanguard-mutation="vanguardMutation"
           v-model:workshop-level="workshopLevel"
           :workshop-level-min="workshopLevelMin"
           :workshop-level-max="workshopLevelMax"
@@ -122,7 +126,7 @@ const activeTab = ref("calculator");
               </template>
             </div>
             <div class="panel" :class="{ hidden: activeTab !== 'estimate' }">
-              <CardEstimateTool />
+              <CardEstimateTool v-model:swarm-mutation="swarmMutation" v-model:vanguard-mutation="vanguardMutation" />
             </div>
             <div class="panel" :class="{ hidden: activeTab !== 'rarity' }">
               <RarityCalculatorTool />

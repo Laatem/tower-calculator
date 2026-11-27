@@ -1,13 +1,22 @@
 <script setup>
+import { ref } from "vue";
 import { useLocale } from "../composables/useLocale";
 
 const { localeTag, t } = useLocale();
+
+// Repliées par défaut pour alléger la sidebar visuellement ; l'utilisateur les déplie au clic.
+const mutationsOpen = ref(false);
+const stuffOpen = ref(false);
+const cardBonusOpen = ref(false);
+const speedBonusOpen = ref(false);
 
 const props = defineProps({
   tierId: { type: Number, required: true },
   availableTiers: { type: Array, required: true },
   climbersCharm: { type: Boolean, required: true },
   maskedManCharm: { type: Boolean, required: true },
+  swarmMutation: { type: Boolean, required: true },
+  vanguardMutation: { type: Boolean, required: true },
   workshopLevel: { type: Number, required: true },
   workshopLevelMin: { type: Number, default: 1 },
   workshopLevelMax: { type: Number, default: 20 },
@@ -25,6 +34,8 @@ const emit = defineEmits([
   "update:tierId",
   "update:climbersCharm",
   "update:maskedManCharm",
+  "update:swarmMutation",
+  "update:vanguardMutation",
   "update:workshopLevel",
   "update:workshopSpeedLevel",
   "update:potionV",
@@ -62,67 +73,114 @@ function fmtPercent(n) {
       </div>
     </div>
 
-    <div class="block stuff">
-      <h6>{{ t("stuffTitle") }}</h6>
+    <div class="block collapsible">
+      <button type="button" class="block-toggle" :aria-expanded="mutationsOpen" @click="mutationsOpen = !mutationsOpen">
+        <h6>{{ t("mutationsTitle") }}</h6>
+        <span class="chevron" :class="{ open: mutationsOpen }" aria-hidden="true">▾</span>
+      </button>
+      <div class="block-body stuff" v-show="mutationsOpen">
+        <label class="charm">
+          <input
+            type="checkbox"
+            class="sr-only"
+            :checked="swarmMutation"
+            @change="emit('update:swarmMutation', $event.target.checked)"
+          />
+          <span class="box" aria-hidden="true"></span>
+          <span class="charm-text">
+            <strong>Swarm</strong>
+            <small>{{ t("swarmDesc") }}</small>
+          </span>
+        </label>
 
-      <label class="charm">
-        <input
-          type="checkbox"
-          class="sr-only"
-          :checked="climbersCharm"
-          @change="emit('update:climbersCharm', $event.target.checked)"
-        />
-        <span class="box" aria-hidden="true"></span>
-        <span class="charm-text">
-          <strong>Climber's Charm</strong>
-          <small>{{ t("climbersDesc") }}</small>
-        </span>
-      </label>
-
-      <label class="charm">
-        <input
-          type="checkbox"
-          class="sr-only"
-          :checked="maskedManCharm"
-          @change="emit('update:maskedManCharm', $event.target.checked)"
-        />
-        <span class="box" aria-hidden="true"></span>
-        <span class="charm-text">
-          <strong>Masked Man</strong>
-          <small>{{ t("maskedDesc") }}</small>
-        </span>
-      </label>
-    </div>
-
-    <div class="block stuff">
-      <h6>{{ t("cardBonusTitle") }}</h6>
-
-      <label class="workshop-field">
-        <span class="workshop-label-row">
-          <span class="workshop-label">{{ t("workshopLabel") }} <small>{{ t("workshopSuffix") }}</small></span>
-          <strong class="workshop-value">{{ workshopLevel }}</strong>
-        </span>
-        <input
-          type="range"
-          class="workshop-slider"
-          :min="workshopLevelMin"
-          :max="workshopLevelMax"
-          step="1"
-          :value="workshopLevel"
-          :aria-label="t('workshopLabel')"
-          @input="emit('update:workshopLevel', +$event.target.value)"
-        />
-      </label>
-
-      <div class="total-row">
-        <span>{{ t("totalCards") }}</span>
-        <strong>+{{ fmtPercent(cardsBonusPercent) }} %</strong>
+        <label class="charm">
+          <input
+            type="checkbox"
+            class="sr-only"
+            :checked="vanguardMutation"
+            @change="emit('update:vanguardMutation', $event.target.checked)"
+          />
+          <span class="box" aria-hidden="true"></span>
+          <span class="charm-text">
+            <strong>Vanguard</strong>
+            <small>{{ t("vanguardDesc") }}</small>
+          </span>
+        </label>
       </div>
     </div>
 
-    <div class="block stuff">
-      <h6>{{ t("speedBonusTitle") }}</h6>
+    <div class="block collapsible">
+      <button type="button" class="block-toggle" :aria-expanded="stuffOpen" @click="stuffOpen = !stuffOpen">
+        <h6>{{ t("stuffTitle") }}</h6>
+        <span class="chevron" :class="{ open: stuffOpen }" aria-hidden="true">▾</span>
+      </button>
+      <div class="block-body stuff" v-show="stuffOpen">
+        <label class="charm">
+          <input
+            type="checkbox"
+            class="sr-only"
+            :checked="climbersCharm"
+            @change="emit('update:climbersCharm', $event.target.checked)"
+          />
+          <span class="box" aria-hidden="true"></span>
+          <span class="charm-text">
+            <strong>Climber's Charm</strong>
+            <small>{{ t("climbersDesc") }}</small>
+          </span>
+        </label>
 
+        <label class="charm">
+          <input
+            type="checkbox"
+            class="sr-only"
+            :checked="maskedManCharm"
+            @change="emit('update:maskedManCharm', $event.target.checked)"
+          />
+          <span class="box" aria-hidden="true"></span>
+          <span class="charm-text">
+            <strong>Masked Man</strong>
+            <small>{{ t("maskedDesc") }}</small>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="block collapsible">
+      <button type="button" class="block-toggle" :aria-expanded="cardBonusOpen" @click="cardBonusOpen = !cardBonusOpen">
+        <h6>{{ t("cardBonusTitle") }}</h6>
+        <span class="chevron" :class="{ open: cardBonusOpen }" aria-hidden="true">▾</span>
+      </button>
+      <div class="block-body stuff" v-show="cardBonusOpen">
+        <label class="workshop-field">
+          <span class="workshop-label-row">
+            <span class="workshop-label">{{ t("workshopLabel") }} <small>{{ t("workshopSuffix") }}</small></span>
+            <strong class="workshop-value">{{ workshopLevel }}</strong>
+          </span>
+          <input
+            type="range"
+            class="workshop-slider"
+            :min="workshopLevelMin"
+            :max="workshopLevelMax"
+            step="1"
+            :value="workshopLevel"
+            :aria-label="t('workshopLabel')"
+            @input="emit('update:workshopLevel', +$event.target.value)"
+          />
+        </label>
+
+        <div class="total-row">
+          <span>{{ t("totalCards") }}</span>
+          <strong>+{{ fmtPercent(cardsBonusPercent) }} %</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="block collapsible">
+      <button type="button" class="block-toggle" :aria-expanded="speedBonusOpen" @click="speedBonusOpen = !speedBonusOpen">
+        <h6>{{ t("speedBonusTitle") }}</h6>
+        <span class="chevron" :class="{ open: speedBonusOpen }" aria-hidden="true">▾</span>
+      </button>
+      <div class="block-body stuff" v-show="speedBonusOpen">
       <label class="speed-field">
         <span class="workshop-label-row">
           <span class="workshop-label">{{ t("speedBaseLabel") }} <small>{{ t("speedBaseSuffix") }}</small></span>
@@ -177,6 +235,7 @@ function fmtPercent(n) {
         <span>{{ t("speedFinalLabel") }}</span>
         <strong v-if="effectiveSpeedLabel">{{ effectiveSpeedLabel }}</strong>
         <span v-else class="final-speed-empty">—</span>
+      </div>
       </div>
     </div>
     </div>
@@ -246,6 +305,19 @@ function fmtPercent(n) {
 .tier-btn.active .wip-dot { background: var(--color-bg); }
 
 .stuff { gap: 16px; }
+
+.collapsible { gap: 0; }
+.block-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 0; margin: 0;
+  background: transparent; border: 0; cursor: pointer; text-align: left;
+}
+.block-toggle h6 { margin: 0; }
+.chevron { font-size: 11px; color: var(--color-neutral-700); transition: transform 0.15s; }
+.chevron.open { transform: rotate(180deg); }
+
+.block-body { display: flex; flex-direction: column; }
+.block-body.stuff { gap: 16px; margin-top: 16px; }
 
 .charm { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
 .charm .sr-only {
