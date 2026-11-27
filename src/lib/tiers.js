@@ -52,6 +52,28 @@ export const TIERS = {
   },
 };
 
+// Mutations : modificateurs de stats que le jeu impose selon le tier (obligatoires côté jeu,
+// l'utilisateur coche simplement celles actives sur son run pour ajuster les calculs). Swarm
+// boost toutes les stats ; Vanguard ne touche que le premier mob (stage 1).
+export const MUTATIONS = {
+  swarm: { statMultiplier: 1.15 },
+  vanguard: { firstMobMultiplier: 2 },
+};
+
+// Enrobe une formule de vie avec les mutations actives, pour réutilisation identique dans le
+// panneau principal (useTowerTier.js) et l'Estimation de stage (CardEstimateTool.vue).
+export function applyMutations(hpFn, { swarm, vanguard } = {}) {
+  if (!hpFn) return hpFn;
+  const swarmMult = swarm ? MUTATIONS.swarm.statMultiplier : 1;
+  const vanguardMult = vanguard ? MUTATIONS.vanguard.firstMobMultiplier : 1;
+  if (swarmMult === 1 && vanguardMult === 1) return hpFn;
+  return (s) => {
+    const base = hpFn(s);
+    if (base == null) return base;
+    return Math.floor(base * swarmMult * (s === 1 ? vanguardMult : 1));
+  };
+}
+
 // Niveau de fiabilité affiché en badge (StageStats.vue) à partir du nombre de points
 // mesurés en jeu ayant servi à caler une formule : 0 = jamais vérifiée, 1-2 = juste mise à
 // l'échelle sur trop peu de points pour fiabiliser la forme de la courbe, 3+ = fiable.

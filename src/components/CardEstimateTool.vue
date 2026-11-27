@@ -1,11 +1,17 @@
 <script setup>
 import { ref, computed } from "vue";
-import { TIERS } from "../lib/tiers";
+import { TIERS, applyMutations } from "../lib/tiers";
 import { estimatedTargetHp, maxStageForHp } from "../lib/estimate";
 import { fmtExact, parseShorthand } from "../lib/format";
 import { useLocale } from "../composables/useLocale";
 
 const { localeTag, t } = useLocale();
+
+const props = defineProps({
+  swarmMutation: { type: Boolean, default: false },
+  vanguardMutation: { type: Boolean, default: false },
+});
+const emit = defineEmits(["update:swarmMutation", "update:vanguardMutation"]);
 
 const cardHpInput = ref("");
 const cardAtkInput = ref("");
@@ -24,7 +30,10 @@ const rows = computed(() => {
     .map((id) => ({
       id,
       label: TIERS[id].label,
-      stage: maxStageForHp(TIERS[id].hp, targetHp.value),
+      stage: maxStageForHp(
+        applyMutations(TIERS[id].hp, { swarm: props.swarmMutation, vanguard: props.vanguardMutation }),
+        targetHp.value
+      ),
     }));
 });
 </script>
@@ -44,6 +53,29 @@ const rows = computed(() => {
       <label class="field">
         <span>{{ t("estimateCardAtk") }}</span>
         <input v-model="cardAtkInput" type="text" inputmode="decimal" :placeholder="t('estimatePlaceholder')" />
+      </label>
+    </div>
+
+    <div class="mutations" role="group" :aria-label="t('mutationsTitle')">
+      <label class="mutation">
+        <input
+          type="checkbox"
+          class="sr-only"
+          :checked="swarmMutation"
+          @change="emit('update:swarmMutation', $event.target.checked)"
+        />
+        <span class="box" aria-hidden="true"></span>
+        <span>Swarm <small>{{ t("swarmDesc") }}</small></span>
+      </label>
+      <label class="mutation">
+        <input
+          type="checkbox"
+          class="sr-only"
+          :checked="vanguardMutation"
+          @change="emit('update:vanguardMutation', $event.target.checked)"
+        />
+        <span class="box" aria-hidden="true"></span>
+        <span>Vanguard <small>{{ t("vanguardDesc") }}</small></span>
       </label>
     </div>
 
@@ -75,6 +107,21 @@ const rows = computed(() => {
   border: 1px solid var(--color-divider);
 }
 .field input::placeholder { color: var(--color-neutral-700); opacity: 0.7; }
+
+.mutations { display: flex; gap: 20px; flex-wrap: wrap; }
+.mutation { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; cursor: pointer; }
+.mutation .sr-only { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.mutation .box {
+  width: 18px; height: 18px; flex: none; margin-top: 1px;
+  border: 2px solid var(--color-divider);
+}
+.mutation .sr-only:checked + .box {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 3px var(--color-bg);
+}
+.mutation .sr-only:focus-visible + .box { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.mutation small { display: block; color: var(--color-neutral-700); font-size: 12px; }
 
 .results { display: flex; flex-direction: column; border: 2px solid var(--color-text); }
 .result {

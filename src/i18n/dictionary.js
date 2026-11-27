@@ -11,6 +11,9 @@ export const DICT = {
   fr: {
     brandLine1: "Calculateur",
     brandLine2: "Tour Infinie",
+    mutationsTitle: "Mutations",
+    swarmDesc: "+15% de stats (vie + ATK)",
+    vanguardDesc: "Le 1er monstre a x2 vie + ATK",
     stuffTitle: "Stuff (cartes + vitesse)",
     cardBonusTitle: "Bonus de cartes",
     climbersDesc: "+60% cartes · +60% vitesse",
@@ -87,6 +90,9 @@ export const DICT = {
   en: {
     brandLine1: "Calculator",
     brandLine2: "Infinite Tower",
+    mutationsTitle: "Mutations",
+    swarmDesc: "+15% stats (HP + ATK)",
+    vanguardDesc: "1st monster has x2 HP + ATK",
     stuffTitle: "Stuff (cards + speed)",
     cardBonusTitle: "Card bonus",
     climbersDesc: "+60% cards · +60% speed",
@@ -163,6 +169,9 @@ export const DICT = {
   es: {
     brandLine1: "Calculadora",
     brandLine2: "Torre Infinita",
+    mutationsTitle: "Mutaciones",
+    swarmDesc: "+15% de stats (vida + ATQ)",
+    vanguardDesc: "El 1er monstruo tiene x2 vida + ATQ",
     stuffTitle: "Stuff (cartas + velocidad)",
     cardBonusTitle: "Bono de cartas",
     climbersDesc: "+60% cartas · +60% velocidad",
@@ -239,6 +248,9 @@ export const DICT = {
   de: {
     brandLine1: "Rechner",
     brandLine2: "Unendlicher Turm",
+    mutationsTitle: "Mutationen",
+    swarmDesc: "+15% Stats (HP + ATK)",
+    vanguardDesc: "1. Monster hat x2 HP + ATK",
     stuffTitle: "Stuff (Karten + Geschwindigkeit)",
     cardBonusTitle: "Kartenbonus",
     climbersDesc: "+60% Karten · +60% Geschwindigkeit",
