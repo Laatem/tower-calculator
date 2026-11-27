@@ -16,10 +16,3 @@ export function maxStageForHp(hpFn, targetHp) {
   return lo;
 }
 
-// Combine HP et ATK de la carte en une seule "puissance de vie encaissable" :
-// dégâts rendus sur la durée de survie (cardHp / enemyAtk, avec enemyAtk = enemyHp / 2).
-// but = enemyHp telle que cardAtk * (2 * cardHp / enemyHp) >= enemyHp, soit enemyHp <= sqrt(2 * cardHp * cardAtk).
-export function estimatedTargetHp(cardHp, cardAtk) {
-  if (!(cardHp > 0) || !(cardAtk > 0)) return null;
-  return Math.sqrt(2 * cardHp * cardAtk);
-}

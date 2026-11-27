@@ -49,15 +49,15 @@ function fmtPercent(n) {
 
 <template>
   <aside class="sidebar">
-    <div class="brand">
-      <span>{{ t("brandLine1") }}</span>
-      <span>{{ t("brandLine2") }}</span>
-    </div>
-
     <div class="info" :class="{ hidden: !visible }">
     <div class="block">
       <h6>Tier</h6>
-      <div class="tier-grid" role="group" aria-label="Tier de la tour">
+      <div
+        class="tier-grid"
+        role="group"
+        aria-label="Tier de la tour"
+        :style="{ gridTemplateColumns: `repeat(${availableTiers.length}, 1fr)` }"
+      >
         <button
           v-for="tierItem in availableTiers"
           :key="tierItem.id"
@@ -142,6 +142,20 @@ function fmtPercent(n) {
             <small>{{ t("maskedDesc") }}</small>
           </span>
         </label>
+
+        <label class="charm">
+          <input
+            type="checkbox"
+            class="sr-only"
+            :checked="potionV"
+            @change="emit('update:potionV', $event.target.checked)"
+          />
+          <span class="box" aria-hidden="true"></span>
+          <span class="charm-text">
+            <strong>Battle Potion V</strong>
+            <small>{{ t("potionVDesc") }}</small>
+          </span>
+        </label>
       </div>
     </div>
 
@@ -195,20 +209,6 @@ function fmtPercent(n) {
         />
       </label>
 
-      <label class="charm">
-        <input
-          type="checkbox"
-          class="sr-only"
-          :checked="potionV"
-          @change="emit('update:potionV', $event.target.checked)"
-        />
-        <span class="box" aria-hidden="true"></span>
-        <span class="charm-text">
-          <strong>Battle Potion V</strong>
-          <small>{{ t("potionVDesc") }}</small>
-        </span>
-      </label>
-
       <label class="workshop-field">
         <span class="workshop-label-row">
           <span class="workshop-label">{{ t("workshopSpeedLabel") }} <small>{{ t("workshopSpeedSuffix") }}</small></span>
@@ -254,18 +254,6 @@ function fmtPercent(n) {
   .sidebar { border-right: 0; border-bottom: 2px solid var(--color-text); }
 }
 
-.brand {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 30px;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  padding: 28px 24px 24px;
-  border-bottom: 2px solid var(--color-text);
-}
-
 .info { display: contents; }
 .info.hidden { visibility: hidden; }
 
@@ -277,23 +265,25 @@ function fmtPercent(n) {
   border-bottom: 2px solid var(--color-divider-soft);
 }
 
+/* grid-template-columns est posé en inline style (nb de tiers dynamique) pour que les
+   boutons restent toujours sur une seule ligne, quel que soit le nombre de tiers. */
 .tier-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 .tier-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 8px;
+  padding: 14px 4px;
   font: 800 14px var(--font-heading);
   color: var(--color-text);
   background: transparent;
   border: 2px solid var(--color-text);
   cursor: pointer;
   text-align: center;
+  white-space: nowrap;
 }
 .tier-btn.active { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
 .tier-btn:not(.active):hover { background: var(--color-divider-soft); }
@@ -390,7 +380,6 @@ function fmtPercent(n) {
 .final-speed-empty { font-size: 16px; opacity: 0.7; }
 
 @media (max-width: 860px) {
-  .brand { padding: 22px 20px 18px; font-size: 26px; }
   .block { padding: 18px 20px; }
 }
 
@@ -398,5 +387,6 @@ function fmtPercent(n) {
 @media (max-width: 380px) {
   .block { padding: 14px 16px; }
   .workshop-label { font-size: 13px; }
+  .tier-btn { font-size: 12px; padding: 12px 2px; }
 }
 </style>
